@@ -1,10 +1,6 @@
 package stepDefinitions;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -18,6 +14,13 @@ import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 
 import org.junit.Assert;
+import org.openqa.selenium.remote.Browser;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.Remote;
 
 public class LoginStepDefinition {
 
@@ -25,91 +28,96 @@ public class LoginStepDefinition {
 
 
     @Given("^user is already on Login Page$")
-    public void user_already_on_login_page() {
+    public void user_already_on_login_page() throws MalformedURLException {
 
-        String browser = System.getProperty("browser", "chrome"); // default = chrome
+        String browser = System.getProperty("browser", "grid"); // default = chrome
 
         switch (browser.toLowerCase()) {
-            case "firefox":
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                driver = new FirefoxDriver(firefoxOptions);
+            case "grid":
+                String hubURL = "http://localhost:4444";
+                ChromeOptions co = new ChromeOptions();
+                co.setCapability("platformName", "windows");
+//                // RemoteWebDriver is the parent of all browserClasses( chrome/ ie driver, etc)
+                driver = new RemoteWebDriver(new URL(hubURL), co);
                 break;
-
-            case "edge":
-                EdgeOptions edgeOptions = new EdgeOptions();
-                driver = new EdgeDriver(edgeOptions);
-                break;
-
-            case "chrome":
-            default:
-                ChromeOptions chromeOptions = new ChromeOptions();
-                driver = new ChromeDriver(chromeOptions);
-                break;
+//            case "firefox":
+//                FirefoxOptions firefoxOptions = new FirefoxOptions();
+//                driver = new FirefoxDriver(firefoxOptions);
+//                break;
+//
+//            case "edge":
+//                EdgeOptions edgeOptions = new EdgeOptions();
+//                driver = new EdgeDriver(edgeOptions);
+//                break;
+//
+//            case "chrome":
+//            default:
+//                ChromeOptions chromeOptions = new ChromeOptions();
+//                driver = new ChromeDriver(chromeOptions);
+//                break;
         }
 
         driver.manage().window().maximize();
         driver.get("https://www.freecrm.com/index.html");
 
-}
+    }
 
 
-@When("^title of login page is Free CRM$")
-public void title_of_login_page_is_free_CRM() {
-    String title = driver.getTitle();
-    System.out.println(title);
-    Assert.assertEquals("#1 Free CRM Business Software - FreeCRM.com", title);
-}
+    @When("^title of login page is Free CRM$")
+    public void title_of_login_page_is_free_CRM() {
+        String title = driver.getTitle();
+        System.out.println(title);
+        Assert.assertEquals("#1 Free CRM Business Software - FreeCRM.com", title);
+    }
 
 //Reg Exp:
 //1. \"([^\"]*)\"
 //2. \"(.*)\"
 
-@Then("^user enters \"(.*)\" and \"(.*)\"$")
-public void user_enters_username_and_password(String username, String password) {
-    driver.findElement(By.name("username")).sendKeys(username);
-    driver.findElement(By.name("password")).sendKeys(password);
-}
+    @Then("^user enters \"(.*)\" and \"(.*)\"$")
+    public void user_enters_username_and_password(String username, String password) {
+        driver.findElement(By.name("username")).sendKeys(username);
+        driver.findElement(By.name("password")).sendKeys(password);
+    }
 
-@Then("^user clicks on login button$")
-public void user_clicks_on_login_button() {
-    WebElement loginBtn = driver.findElement(By.xpath("//input[@type='submit']"));
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("arguments[0].click();", loginBtn);
-}
-
-
-@Then("^user is on home page$")
-public void user_is_on_hopme_page() {
-    String title = driver.getTitle();
-    System.out.println("Home Page title ::" + title);
-    Assert.assertEquals("CRMPRO", title);
-}
-
-@Then("^user moves to new contact page$")
-public void user_moves_to_new_contact_page() {
-    driver.switchTo().frame("mainpanel");
-    Actions action = new Actions(driver);
-    action.moveToElement(driver.findElement(By.xpath("//a[contains(text(),'Contacts')]"))).build().perform();
-    driver.findElement(By.xpath("//a[contains(text(),'New Contact')]")).click();
-
-}
+    @Then("^user clicks on login button$")
+    public void user_clicks_on_login_button() {
+        WebElement loginBtn = driver.findElement(By.xpath("//input[@type='submit']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", loginBtn);
+    }
 
 
-@Then("^user enters contact details \"(.*)\" and \"(.*)\" and \"(.*)\"$")
-public void user_enters_contacts_details(String firstname, String lastname, String position) {
-    driver.findElement(By.id("first_name")).sendKeys(firstname);
-    driver.findElement(By.id("surname")).sendKeys(lastname);
-    driver.findElement(By.id("company_position")).sendKeys(position);
-    driver.findElement(By.xpath("//input[@type='submit' and @value='Save']")).click();
-}
+    @Then("^user is on home page$")
+    public void user_is_on_hopme_page() {
+        String title = driver.getTitle();
+        System.out.println("Home Page title ::" + title);
+        Assert.assertEquals("CRMPRO", title);
+    }
+
+    @Then("^user moves to new contact page$")
+    public void user_moves_to_new_contact_page() {
+        driver.switchTo().frame("mainpanel");
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElement(By.xpath("//a[contains(text(),'Contacts')]"))).build().perform();
+        driver.findElement(By.xpath("//a[contains(text(),'New Contact')]")).click();
+
+    }
 
 
-@Then("^Close the browser$")
-public void close_the_browser() {
-    driver.quit();
-}
+    @Then("^user enters contact details \"(.*)\" and \"(.*)\" and \"(.*)\"$")
+    public void user_enters_contacts_details(String firstname, String lastname, String position) {
+        driver.findElement(By.id("first_name")).sendKeys(firstname);
+        driver.findElement(By.id("surname")).sendKeys(lastname);
+        driver.findElement(By.id("company_position")).sendKeys(position);
+        driver.findElement(By.xpath("//input[@type='submit' and @value='Save']")).click();
+    }
 
 
+    @Then("^Close the browser$")
+    public void close_the_browser() {
+        driver.quit();
+    }
 
 
 }

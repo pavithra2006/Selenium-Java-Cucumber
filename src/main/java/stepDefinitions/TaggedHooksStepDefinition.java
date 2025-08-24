@@ -11,8 +11,7 @@ public class TaggedHooksStepDefinition {
 	
 	@Before(order=0)
 	public void setUP(){
-		System.out.println("launch FF");
-		System.out.println("Enter URL for Free CRM APP");
+		System.out.println("Enter URL for Free CRM APP - order 0");
 	}
 
 	@After(order=0)
@@ -23,7 +22,7 @@ public class TaggedHooksStepDefinition {
 	@Before(order=1)
 	public void setUP1(){
 		System.out.println("launch FF");
-		System.out.println("Enter URL for Free CRM APP");
+		System.out.println("Enter URL for Free CRM APP - order1");
 	}
 
 	@After(order=1)
