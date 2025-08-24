@@ -1,9 +1,10 @@
 package stepDefinitions;
 
-import cucumber.api.PendingException;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
+//import io.cucumber.PendingException;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+
 
 public class TaggingStepDefinition {
 //	@Before
